@@ -3,11 +3,9 @@
 **Updated:** June 18, 2026
 **Purpose:** Context file so the next agent (Claude/Codex) can continue without the prior chat.
 
-## Folder Location
+## Local Folder
 
-```text
-/Users/akhileshthokala/Documents/Claude/Projects/Project Google/retail-ops-agent-gcp
-```
+This file lives at the root of the local checkout. Use `pwd` from this directory to see the machine-specific path.
 
 ## GitHub Location
 
@@ -67,7 +65,7 @@ Cloud integration points are still **honest and opt-in**. BigQuery seeding/repos
 ## Commands
 
 ```bash
-cd "/Users/akhileshthokala/Documents/Claude/Projects/Project Google/retail-ops-agent-gcp"
+cd retail-ops-agent-gcp
 make test   # 10 passing
 make eval   # 4/4 passing
 make demo   # grounded answers for 5 scenarios
