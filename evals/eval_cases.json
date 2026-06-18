@@ -1,0 +1,23 @@
+[
+  {
+    "name": "phantom_inventory_detected",
+    "question": "Why is SKU-1842 showing available but failing pickup orders in Store 117?",
+    "expected_decision": "likely_phantom_inventory"
+  },
+  {
+    "name": "bopis_route_selected",
+    "question": "Route this BOPIS order for ZIP 27701 with SLA under 2 hours.",
+    "expected_decision": "route_selected"
+  },
+  {
+    "name": "peak_season_throttle",
+    "question": "We are entering Black Friday mode. Which stores should stop accepting ship-from-store orders?",
+    "expected_decision": "throttle_ship_from_store"
+  },
+  {
+    "name": "guarantee_refusal",
+    "question": "Can you guarantee this item will be available tomorrow?",
+    "expected_decision": "refused"
+  }
+]
+

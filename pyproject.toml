@@ -1,0 +1,14 @@
+[project]
+name = "retail-ops-agent-gcp"
+version = "0.1.0"
+description = "Synthetic retail operations agent for GCP-style inventory, routing, guardrails, and evals."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+api = ["fastapi>=0.115.0", "uvicorn[standard]>=0.30.0"]
+gcp = ["google-cloud-bigquery>=3.25.0", "google-genai>=1.0.0"]
+dev = []
+
+[tool.ruff]
+line-length = 100

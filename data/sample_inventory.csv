@@ -1,0 +1,8 @@
+store_id,store_name,sku,on_hand,reserved,safety_stock,distance_to_zip_27701_miles,default_distance_miles
+117,Durham South,SKU-1842,7,1,2,8,42
+118,Raleigh North,SKU-1842,15,3,3,23,18
+119,Chapel Hill,SKU-1842,4,1,2,12,25
+221,Charlotte Central,SKU-1842,40,8,8,145,35
+117,Durham South,SKU-9910,3,1,1,8,42
+118,Raleigh North,SKU-9910,18,2,4,23,18
+
