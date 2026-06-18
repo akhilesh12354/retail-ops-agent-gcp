@@ -20,7 +20,7 @@ make demo
 
 **Q:** Route this BOPIS order for ZIP 27701 with SLA under 2 hours.
 
-**A:** Route BOPIS order for SKU-1842 to Store 118. It has 9 sellable units, is 23 miles from ZIP 27701, and is at 51% fulfillment utilization.
+**A:** Route BOPIS order for SKU-1842 to Store 118. It has 9 sellable units, is 23 miles from ZIP 27701, is at 51% fulfillment utilization, and has a 61/100 route fit score.
 
 **Decision:** `route_selected`
 

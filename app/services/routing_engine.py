@@ -44,16 +44,26 @@ def route_order(
         }
 
     score, row, capacity, available, utilization, distance = sorted(candidates, reverse=True, key=lambda item: item[0])[0]
+    fit_score = _fit_score(available=available, utilization=utilization, distance=distance, channel=channel)
     return {
         "decision": "route_selected",
         "store_id": row["store_id"],
         "score": score,
+        "fit_score": fit_score,
         "inventory_row": row,
         "capacity_row": capacity,
         "explanation": (
             f"Route {channel.upper()} order for {sku} to Store {row['store_id']}. "
             f"It has {available} sellable units, is {distance} miles from ZIP {destination_zip}, "
-            f"and is at {utilization:.0%} fulfillment utilization."
+            f"is at {utilization:.0%} fulfillment utilization, and has a {fit_score}/100 route fit score."
         ),
     }
 
+
+def _fit_score(available: int, utilization: float, distance: int, channel: str) -> int:
+    stock_score = min(45, available * 4)
+    capacity_score = max(0, round((1 - utilization) * 35))
+    distance_score = max(0, 20 - round(distance / 2))
+    if channel.upper() == "SHIP_FROM_STORE":
+        distance_score = max(0, 20 - round(distance / 10))
+    return max(0, min(100, stock_score + capacity_score + distance_score))

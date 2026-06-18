@@ -10,6 +10,8 @@ class RoutingTests(unittest.TestCase):
         response = tools.route_order("SKU-1842", 1, "27701", "BOPIS", 2)
         self.assertEqual(response["decision"], "route_selected")
         self.assertEqual(response["selected_store"], "118")
+        self.assertGreaterEqual(response["score"], 0)
+        self.assertLessEqual(response["score"], 100)
 
     def test_peak_season_throttles_overloaded_stores(self):
         tools = RetailOpsTools(InventoryRepository.from_default_csvs())
@@ -20,4 +22,3 @@ class RoutingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

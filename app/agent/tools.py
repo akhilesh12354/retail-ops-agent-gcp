@@ -39,7 +39,7 @@ class RetailOpsTools:
             "answer": result["explanation"],
             "decision": result["decision"],
             "selected_store": result["store_id"],
-            "score": result["score"],
+            "score": result["fit_score"],
             "sources": sources,
         }
 
@@ -64,4 +64,3 @@ class RetailOpsTools:
             "stores": [row["store_id"] for row, _ in overloaded],
             "sources": [cite_capacity_row(row) for row, _ in overloaded],
         }
-
