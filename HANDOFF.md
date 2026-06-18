@@ -9,6 +9,12 @@
 /Users/akhileshthokala/Documents/Claude/Projects/Project Google/retail-ops-agent-gcp
 ```
 
+## GitHub Location
+
+```text
+https://github.com/akhilesh12354/retail-ops-agent-gcp
+```
+
 ## Why This Project Exists
 
 Flagship GitHub portfolio project for Akhilesh Thokala's Google Cloud Customer Engineer / Platform Retail application. It makes the resume's "RetailOperationsAgent PoC on GCP" claim verifiable with public-safe synthetic data: Vertex/Gemini reasoning, BigQuery inventory truth layer, Cloud Run serving, phantom-inventory detection, BOPIS / ship-from-store routing, peak-season ops, refusal guardrails, source-grounded responses, and evals.
@@ -17,9 +23,10 @@ Flagship GitHub portfolio project for Akhilesh Thokala's Google Cloud Customer E
 
 Everything below was run and confirmed this session — not just claimed:
 
-- `make test` → **7 tests passed**
+- `make test` → **10 tests passed**
 - `make eval` → **4/4 evals passed** (phantom inventory, BOPIS route, peak-season throttle, guarantee refusal)
 - `make demo` → grounded answers with source-row citations for all 5 scenarios
+- GitHub Actions CI → **completed successfully** on push `27791106057`
 
 The core test/eval/demo path runs fully local with Python **stdlib only**. Optional extras in `pyproject.toml` add FastAPI/Uvicorn and GCP clients without breaking the zero-dependency core path.
 
@@ -35,7 +42,7 @@ Cloud integration points are still **honest and opt-in**. BigQuery seeding/repos
 
 ## ⚠️ Steering Notes for the Next Agent — READ FIRST
 
-1. **This must be pushed to GitHub next.** If local git has been initialized but remote push is blocked, re-authenticate `gh` first with `gh auth login -h github.com`.
+1. **This is now pushed to GitHub.** Keep future work on `main` or short feature branches, and verify CI after every push.
 2. **Codex's prior work is trustworthy and accurate** — claims in the old handoff matched reality on re-test. Keep that standard: only mark something done after running it.
 3. **Do not fake cloud functionality.** The stubs are a feature. If you implement Vertex/BigQuery, make it genuinely work behind an env-gated flag; otherwise leave the honest `NotImplementedError` in place. Never claim production GCP that isn't running.
 4. **Keep the repo runnable from a fresh clone with zero external deps** for the core demo/test/eval path. Any new dependency (FastAPI, google-cloud-*) must be optional and not break `make test/eval/demo`.
@@ -44,9 +51,9 @@ Cloud integration points are still **honest and opt-in**. BigQuery seeding/repos
 
 **P0 — Make it a real portfolio repo (do first):**
 
-1. `git init`, add `.gitignore` (already present), initial commit. Acceptance: `git log` shows a clean initial commit; no secrets/`.env` tracked.
-2. Push to GitHub as `akhilesh12354/retail-ops-agent-gcp`. Acceptance: repo public, README renders.
-3. GitHub Actions CI running `make test` and `make eval` on push/PR. Acceptance: green check on GitHub.
+1. Keep GitHub Actions green after every change. Acceptance: `make test` and `make eval` pass locally and in CI.
+2. Add repo topics/description on GitHub if not already set. Suggested topics: `gcp`, `retail`, `bigquery`, `cloud-run`, `vertex-ai`, `gemini`, `bopis`, `inventory`, `agent`.
+3. Add this repo to the GitHub profile README and pin it.
 
 **P1 — Make the README portfolio-grade (cheap, high signal):**
 
@@ -61,7 +68,7 @@ Cloud integration points are still **honest and opt-in**. BigQuery seeding/repos
 
 ```bash
 cd "/Users/akhileshthokala/Documents/Claude/Projects/Project Google/retail-ops-agent-gcp"
-make test   # 7 passing
+make test   # 10 passing
 make eval   # 4/4 passing
 make demo   # grounded answers for 5 scenarios
 ```
