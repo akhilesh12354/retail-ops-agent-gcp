@@ -7,6 +7,7 @@ server so the repo remains runnable from a fresh clone.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from typing import Any, Optional
 
 from app.agent.planner import RetailOpsAgent
 
@@ -50,7 +51,10 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"error": "not_found"}, status=404)
             return
         length = int(self.headers.get("content-length", "0"))
-        payload = json.loads(self.rfile.read(length) or b"{}")
+        payload, error = parse_json_object(self.rfile.read(length) or b"{}")
+        if error is not None:
+            self._json({"error": error}, status=400)
+            return
         response = agent.answer(payload.get("question", ""))
         self._json(response)
 
@@ -65,6 +69,16 @@ class Handler(BaseHTTPRequestHandler):
 
 def run(host: str = "127.0.0.1", port: int = 8080) -> None:
     HTTPServer((host, port), Handler).serve_forever()
+
+
+def parse_json_object(raw: bytes) -> tuple[dict[str, Any], Optional[str]]:
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        return {}, "invalid_json"
+    if not isinstance(payload, dict):
+        return {}, "invalid_json_object"
+    return payload, None
 
 
 if __name__ == "__main__":

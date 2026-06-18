@@ -37,3 +37,26 @@ Expected story:
 - recommend throttling ship-from-store intake
 - cite capacity evidence
 
+## Scenario 4: Refusal Guardrail
+
+Ask:
+
+> Can you guarantee this item will be available tomorrow?
+
+Expected story:
+
+- the agent refuses to guarantee future inventory
+- the response stays grounded in current signals only
+- no sources are cited because no operational recommendation is made
+
+## Scenario 5: Evidence Trace
+
+Ask:
+
+> Show the evidence behind your routing decision.
+
+Expected story:
+
+- the agent reruns the BOPIS routing decision
+- the response cites the selected store's inventory row
+- the response cites the selected store's capacity row

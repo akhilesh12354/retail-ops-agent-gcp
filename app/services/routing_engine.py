@@ -16,9 +16,11 @@ def route_order(
     candidates = []
 
     for row in inventory_rows:
-        capacity = capacity_by_store[row["store_id"]]
+        capacity = capacity_by_store.get(row["store_id"])
+        if capacity is None:
+            continue
         available = int(row["on_hand"]) - int(row["reserved"]) - int(row["safety_stock"])
-        utilization = int(capacity["open_orders"]) / int(capacity["daily_capacity"])
+        utilization = _capacity_utilization(capacity)
         distance = int(row["distance_to_zip_27701_miles"]) if destination_zip == "27701" else int(row["default_distance_miles"])
 
         if available < quantity:
@@ -29,17 +31,19 @@ def route_order(
             continue
 
         score = round((available * 2.0) - (distance * 0.35) - (utilization * 20.0), 2)
-        if capacity["peak_season_mode"].lower() == "true" and channel.upper() == "SHIP_FROM_STORE":
+        if str(capacity["peak_season_mode"]).lower() == "true" and channel.upper() == "SHIP_FROM_STORE":
             score -= 8
         candidates.append((score, row, capacity, available, utilization, distance))
 
     if not candidates:
+        fallback_inventory = inventory_rows[0] if inventory_rows else None
         return {
             "decision": "no_safe_route",
             "store_id": None,
             "score": 0,
-            "inventory_row": inventory_rows[0],
-            "capacity_row": capacity_rows[0],
+            "fit_score": 0,
+            "inventory_row": fallback_inventory,
+            "capacity_row": capacity_rows[0] if fallback_inventory is not None and capacity_rows else None,
             "explanation": f"No safe route found for {sku}; inventory, distance, or capacity constraints blocked fulfillment.",
         }
 
@@ -67,3 +71,10 @@ def _fit_score(available: int, utilization: float, distance: int, channel: str) 
     if channel.upper() == "SHIP_FROM_STORE":
         distance_score = max(0, 20 - round(distance / 10))
     return max(0, min(100, stock_score + capacity_score + distance_score))
+
+
+def _capacity_utilization(row: dict) -> float:
+    daily_capacity = int(row["daily_capacity"])
+    if daily_capacity <= 0:
+        return 1.0
+    return int(row["open_orders"]) / daily_capacity

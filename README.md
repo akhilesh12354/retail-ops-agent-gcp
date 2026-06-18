@@ -96,6 +96,10 @@ make eval
 
 See [docs/demo-transcript.md](docs/demo-transcript.md) for sample output from `make demo`.
 
+## Customer Engineer Discovery
+
+See [docs/discovery-questions.md](docs/discovery-questions.md) for retail scoping questions that connect this demo to a real Google Cloud Customer Engineer conversation.
+
 ## Public-Safety Note
 
 All data is synthetic. Do not add customer names, customer diagrams, real order data, production endpoints, credentials, or screenshots from private systems.

@@ -21,7 +21,6 @@ def cite_capacity_row(row: dict) -> dict:
         "store_id": row["store_id"],
         "daily_capacity": int(row["daily_capacity"]),
         "open_orders": int(row["open_orders"]),
-        "peak_season_mode": row["peak_season_mode"].lower() == "true",
+        "peak_season_mode": str(row["peak_season_mode"]).lower() == "true",
         "source": "data/sample_store_capacity.csv",
     }
-

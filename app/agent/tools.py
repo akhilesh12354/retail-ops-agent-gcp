@@ -34,7 +34,11 @@ class RetailOpsTools:
             channel=channel,
             sla_hours=sla_hours,
         )
-        sources = [cite_inventory_row(result["inventory_row"]), cite_capacity_row(result["capacity_row"])]
+        sources = []
+        if result["inventory_row"] is not None:
+            sources.append(cite_inventory_row(result["inventory_row"]))
+        if result["capacity_row"] is not None:
+            sources.append(cite_capacity_row(result["capacity_row"]))
         return {
             "answer": result["explanation"],
             "decision": result["decision"],
@@ -46,8 +50,8 @@ class RetailOpsTools:
     def peak_season_recommendations(self) -> dict:
         overloaded = []
         for row in self.repo.capacity_rows():
-            utilization = int(row["open_orders"]) / int(row["daily_capacity"])
-            if row["peak_season_mode"].lower() == "true" and utilization >= 0.9:
+            utilization = _capacity_utilization(row)
+            if str(row["peak_season_mode"]).lower() == "true" and utilization >= 0.9:
                 overloaded.append((row, utilization))
 
         if not overloaded:
@@ -64,3 +68,10 @@ class RetailOpsTools:
             "stores": [row["store_id"] for row, _ in overloaded],
             "sources": [cite_capacity_row(row) for row, _ in overloaded],
         }
+
+
+def _capacity_utilization(row: dict) -> float:
+    daily_capacity = int(row["daily_capacity"])
+    if daily_capacity <= 0:
+        return 1.0
+    return int(row["open_orders"]) / daily_capacity

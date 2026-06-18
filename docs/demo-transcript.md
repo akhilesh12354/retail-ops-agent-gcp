@@ -43,3 +43,13 @@ make demo
 **A:** I cannot guarantee future inventory availability. I can only provide a grounded assessment from current inventory, order, and capacity signals.
 
 **Decision:** `refused`
+
+## Evidence Trace
+
+**Q:** Show the evidence behind your routing decision.
+
+**A:** Route BOPIS order for SKU-1842 to Store 118. It has 9 sellable units, is 23 miles from ZIP 27701, is at 51% fulfillment utilization, and has a 61/100 route fit score.
+
+**Decision:** `route_selected`
+
+**Evidence:** `data/sample_inventory.csv` and `data/sample_store_capacity.csv`.

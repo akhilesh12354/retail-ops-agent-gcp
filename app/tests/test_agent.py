@@ -17,8 +17,9 @@ class AgentTests(unittest.TestCase):
         self.assertEqual(response["decision"], "route_selected")
         self.assertIn("selected_store", response)
         self.assertTrue(response["sources"])
+        self.assertGreaterEqual(response["score"], 0)
+        self.assertLessEqual(response["score"], 100)
 
 
 if __name__ == "__main__":
     unittest.main()
-

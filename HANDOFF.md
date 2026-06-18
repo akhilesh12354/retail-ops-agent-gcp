@@ -21,7 +21,7 @@ Flagship GitHub portfolio project for Akhilesh Thokala's Google Cloud Customer E
 
 Everything below was run and confirmed this session — not just claimed:
 
-- `make test` → **10 tests passed**
+- `make test` → **17 tests passed**
 - `make eval` → **4/4 evals passed** (phantom inventory, BOPIS route, peak-season throttle, guarantee refusal)
 - `make demo` → grounded answers with source-row citations for all 5 scenarios
 - GitHub Actions CI → **completed successfully** on push `27791106057`
@@ -47,6 +47,19 @@ Full security/privacy, credibility, README, and Google Cloud CE relevance review
 - Verified after changes: `make test` 10/10, `make eval` 4/4.
 
 Optional (not blocking): pin GitHub Actions to commit SHAs; add a customer-facing "discovery questions / business value" note to strengthen the CE consulting angle.
+
+## Antigravity Review Fixes — June 18, 2026
+
+Antigravity identified two blocking edge-case bugs and several polish items. Applied fixes:
+
+- BigQuery/native boolean values now work anywhere `peak_season_mode` is read.
+- Unknown SKU / empty inventory routing returns `no_safe_route` instead of crashing.
+- Zero daily capacity is treated as fully utilized instead of raising `ZeroDivisionError`.
+- Stdlib API fallback returns clean JSON errors for malformed or non-object JSON.
+- Demo docs now include all five demo prompts.
+- `docs/design-decisions.md` documents deterministic planner scope.
+- `docs/discovery-questions.md` adds Google CE retail scoping questions.
+- Regression coverage added; latest local verification: `make test` 17/17, `make eval` 4/4.
 
 ## ⚠️ Steering Notes for the Next Agent — READ FIRST
 
@@ -76,7 +89,7 @@ Optional (not blocking): pin GitHub Actions to commit SHAs; add a customer-facin
 
 ```bash
 cd retail-ops-agent-gcp
-make test   # 10 passing
+make test   # 17 passing
 make eval   # 4/4 passing
 make demo   # grounded answers for 5 scenarios
 ```
