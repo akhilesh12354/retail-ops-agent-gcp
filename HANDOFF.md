@@ -38,6 +38,16 @@ Cloud integration points are still **honest and opt-in**. BigQuery seeding/repos
 - `app/api/main.py` — optional FastAPI app with stdlib fallback
 - `infra/cloudrun.Dockerfile`, `infra/deploy.sh` — Cloud Run deploy scaffolding
 
+## Peer Review — June 18, 2026 (passed)
+
+Full security/privacy, credibility, README, and Google Cloud CE relevance review completed. Verdict: ship-ready. No secrets in git history; only `.env.example` (placeholders) tracked; data fully synthetic with no PII. Cloud claims honestly hedged; `vertex_adapter` validation is real and tested; Gemini live call still `NotImplementedError` (intentional). Three small fixes applied this session:
+
+- README: added CI status badge and labeled demo prompt #4 `(must refuse)`.
+- `infra/deploy.sh`: added comment that `--allow-unauthenticated` is demo-only.
+- Verified after changes: `make test` 10/10, `make eval` 4/4.
+
+Optional (not blocking): pin GitHub Actions to commit SHAs; add a customer-facing "discovery questions / business value" note to strengthen the CE consulting angle.
+
 ## ⚠️ Steering Notes for the Next Agent — READ FIRST
 
 1. **This is now pushed to GitHub.** Keep future work on `main` or short feature branches, and verify CI after every push.

@@ -4,6 +4,8 @@ set -euo pipefail
 : "${GOOGLE_CLOUD_PROJECT:?Set GOOGLE_CLOUD_PROJECT first}"
 : "${REGION:=us-central1}"
 
+# NOTE: --allow-unauthenticated is for the public demo only. For any non-demo
+# deployment, remove this flag and require authentication (see docs/gcp-deployment.md).
 gcloud run deploy retail-ops-agent-gcp \
   --source . \
   --project "$GOOGLE_CLOUD_PROJECT" \

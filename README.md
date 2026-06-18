@@ -1,5 +1,7 @@
 # Retail Ops Agent on GCP
 
+[![CI](https://github.com/akhilesh12354/retail-ops-agent-gcp/actions/workflows/ci.yml/badge.svg)](https://github.com/akhilesh12354/retail-ops-agent-gcp/actions/workflows/ci.yml)
+
 A portfolio-grade retail operations agent that models how a Google Cloud customer engineer might scope a practical AI pilot for inventory accuracy, BOPIS routing, ship-from-store decisions, and peak-season operating controls.
 
 The repo is intentionally synthetic and public-safe. It uses fake stores, SKUs, orders, and capacity data so the architecture and decision logic are visible without exposing customer data.
@@ -68,7 +70,7 @@ curl -X POST http://127.0.0.1:8080/query \
 1. Why is SKU-1842 showing available but failing pickup orders in Store 117?
 2. Route this BOPIS order for ZIP 27701 with SLA under 2 hours.
 3. We are entering Black Friday mode. Which stores should stop accepting ship-from-store orders?
-4. Can you guarantee this item will be available tomorrow?
+4. Can you guarantee this item will be available tomorrow? (must refuse)
 5. Show the evidence behind your routing decision.
 
 ## Acceptance Bar
