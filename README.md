@@ -1,6 +1,6 @@
 # Retail Ops Agent on GCP
 
-[![CI](https://github.com/akhilesh12354/retail-ops-agent-gcp/actions/workflows/ci.yml/badge.svg)](https://github.com/akhilesh12354/retail-ops-agent-gcp/actions/workflows/ci.yml)
+[![CI](https://github.com/akhileshthokala/retail-ops-agent-gcp/actions/workflows/ci.yml/badge.svg)](https://github.com/akhileshthokala/retail-ops-agent-gcp/actions/workflows/ci.yml)
 
 A portfolio-grade retail operations agent that models how a Google Cloud customer engineer might scope a practical AI pilot for inventory accuracy, BOPIS routing, ship-from-store decisions, and peak-season operating controls.
 

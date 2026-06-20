@@ -6,7 +6,7 @@
 ## GitHub Location
 
 ```text
-https://github.com/akhilesh12354/retail-ops-agent-gcp
+https://github.com/akhileshthokala/retail-ops-agent-gcp
 ```
 
 ## Current State
