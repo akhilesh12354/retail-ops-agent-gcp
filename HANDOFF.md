@@ -1,11 +1,7 @@
-# Retail Ops Agent GCP — Handoff
+# Retail Ops Agent GCP - Handoff
 
-**Updated:** June 18, 2026
-**Purpose:** Context file so the next agent (Claude/Codex) can continue without the prior chat.
-
-## Local Folder
-
-This file lives at the root of the local checkout. Use `pwd` from this directory to see the machine-specific path.
+**Updated:** June 20, 2026
+**Purpose:** Continuation context for future local work on this portfolio repo.
 
 ## GitHub Location
 
@@ -13,120 +9,55 @@ This file lives at the root of the local checkout. Use `pwd` from this directory
 https://github.com/akhilesh12354/retail-ops-agent-gcp
 ```
 
-## Why This Project Exists
+## Current State
 
-Flagship GitHub portfolio project for Akhilesh Thokala's Google Cloud Customer Engineer / Platform Retail application. It makes the resume's "RetailOperationsAgent PoC on GCP" claim verifiable with public-safe synthetic data: Vertex/Gemini reasoning, BigQuery inventory truth layer, Cloud Run serving, phantom-inventory detection, BOPIS / ship-from-store routing, peak-season ops, refusal guardrails, source-grounded responses, and evals.
+This is a public-safe, synthetic Google Cloud retail operations portfolio project. It supports the resume claim about a retail operations agent PoC on GCP using Vertex AI / Gemini, BigQuery, Cloud Run-style serving, BOPIS and ship-from-store routing, refusal guardrails, and source-grounded responses.
 
-## Verified Current State (re-checked June 18, 2026)
+Verified locally on June 20, 2026:
 
-Everything below was run and confirmed this session — not just claimed:
+- `make test` -> 24 tests passed
+- `make eval` -> 42/42 eval scenarios passed
+- Eval coverage spans six use cases: inventory detection, BOPIS routing, ship-from-store routing, peak-season controls, refusal guardrails, and source-grounded responses
 
-- `make test` → **17 tests passed**
-- `make eval` → **4/4 evals passed** (phantom inventory, BOPIS route, peak-season throttle, guarantee refusal)
-- `make demo` → grounded answers with source-row citations for all 5 scenarios
-- GitHub Actions CI → **completed successfully** on push `27791106057`
+## What Was Just Added
 
-The core test/eval/demo path runs fully local with Python **stdlib only**. Optional extras in `pyproject.toml` add FastAPI/Uvicorn and GCP clients without breaking the zero-dependency core path.
+- Expanded eval coverage from 4 scenarios to 42 scenarios.
+- Added optional BigQuery and Vertex AI / Gemini runtime configuration paths.
+- Added live Vertex AI tool-call planning behind `USE_VERTEX_AI=true`; deterministic planning remains the default.
+- Updated Cloud Run deployment env-var handling.
+- Added `docs/native-gcp-validation.md` as the next-step test plan for a real GCP sandbox.
+- Updated README claim mapping and public-safety language.
 
-Implemented and working: synthetic inventory/order/capacity CSVs, phantom-inventory detection, BOPIS routing, peak-season throttling, refusal guardrails, grounded responses with citations, local demo, eval harness, unit tests, full docs set, MIT license, Mermaid README architecture, demo transcript, GitHub Actions CI config, optional FastAPI API path, BigQuery seed script, BigQuery repository adapter, and strict Vertex/Gemini tool-call validation boundary.
+## Native GCP Next Step
 
-Cloud integration points are still **honest and opt-in**. BigQuery seeding/repository code is implemented but requires `pip install '.[gcp]'`, GCP auth, and a project. Gemini planning still raises `NotImplementedError` until live model wiring is intentionally added.
+Run the project in a sandbox GCP environment:
 
-- `app/agent/vertex_adapter.py` — Vertex/Gemini tool-calling boundary with strict schema validation
-- `app/services/bigquery_inventory.py` — BigQuery repository adapter, lazy-imported
-- `scripts/seed_bigquery.py` — BigQuery seeding script with explicit schemas
-- `app/api/main.py` — optional FastAPI app with stdlib fallback
-- `infra/cloudrun.Dockerfile`, `infra/deploy.sh` — Cloud Run deploy scaffolding
+1. Enable Cloud Run, BigQuery, Vertex AI, and Cloud Build APIs.
+2. Seed synthetic CSVs into BigQuery with `scripts/seed_bigquery.py`.
+3. Deploy Cloud Run with `USE_BIGQUERY=true` and `USE_VERTEX_AI=false`.
+4. Smoke test `/health` and `/query`.
+5. Redeploy with `USE_VERTEX_AI=true` and verify Gemini tool-call planning.
+6. Record prompt outputs, source citations, and IAM settings.
 
-## Peer Review — June 18, 2026 (passed)
+See `docs/native-gcp-validation.md` for the command-level checklist.
 
-Full security/privacy, credibility, README, and Google Cloud CE relevance review completed. Verdict: ship-ready. No secrets in git history; only `.env.example` (placeholders) tracked; data fully synthetic with no PII. Cloud claims honestly hedged; `vertex_adapter` validation is real and tested; Gemini live call still `NotImplementedError` (intentional). Three small fixes applied this session:
+## Safety Constraints
 
-- README: added CI status badge and labeled demo prompt #4 `(must refuse)`.
-- `infra/deploy.sh`: added comment that `--allow-unauthenticated` is demo-only.
-- Verified after changes: `make test` 10/10, `make eval` 4/4.
-
-Optional (not blocking): pin GitHub Actions to commit SHAs; add a customer-facing "discovery questions / business value" note to strengthen the CE consulting angle.
-
-## Antigravity Review Fixes — June 18, 2026
-
-Antigravity identified two blocking edge-case bugs and several polish items. Applied fixes:
-
-- BigQuery/native boolean values now work anywhere `peak_season_mode` is read.
-- Unknown SKU / empty inventory routing returns `no_safe_route` instead of crashing.
-- Zero daily capacity is treated as fully utilized instead of raising `ZeroDivisionError`.
-- Stdlib API fallback returns clean JSON errors for malformed or non-object JSON.
-- Demo docs now include all five demo prompts.
-- `docs/design-decisions.md` documents deterministic planner scope.
-- `docs/discovery-questions.md` adds Google CE retail scoping questions.
-- Regression coverage added; latest local verification: `make test` 17/17, `make eval` 4/4.
-
-## ⚠️ Steering Notes for the Next Agent — READ FIRST
-
-1. **This is now pushed to GitHub.** Keep future work on `main` or short feature branches, and verify CI after every push.
-2. **Codex's prior work is trustworthy and accurate** — claims in the old handoff matched reality on re-test. Keep that standard: only mark something done after running it.
-3. **Do not fake cloud functionality.** The stubs are a feature. If you implement Vertex/BigQuery, make it genuinely work behind an env-gated flag; otherwise leave the honest `NotImplementedError` in place. Never claim production GCP that isn't running.
-4. **Keep the repo runnable from a fresh clone with zero external deps** for the core demo/test/eval path. Any new dependency (FastAPI, google-cloud-*) must be optional and not break `make test/eval/demo`.
-
-## Next Sprint — Prioritized, with Acceptance Criteria
-
-**P0 — Make it a real portfolio repo (do first):**
-
-1. Keep GitHub Actions green after every change. Acceptance: `make test` and `make eval` pass locally and in CI.
-2. Add repo topics/description on GitHub if not already set. Suggested topics: `gcp`, `retail`, `bigquery`, `cloud-run`, `vertex-ai`, `gemini`, `bopis`, `inventory`, `agent`.
-3. Add this repo to the GitHub profile README and pin it.
-
-**P1 — Make the README portfolio-grade (cheap, high signal):**
-
-4. Add screenshots or a terminal GIF only if useful. Mermaid diagram and demo transcript are already present.
-
-**P2 — Real cloud, only if genuinely implemented (env-gated, optional deps):**
-
-5. Cloud Run smoke-test notes added to `docs/gcp-deployment.md` after a real deploy.
-6. Live Gemini planning if cloud credentials are available. Acceptance: deterministic planner stays the default; Gemini path is opt-in and validated before any tool executes.
-
-## Commands
-
-```bash
-cd retail-ops-agent-gcp
-make test   # 17 passing
-make eval   # 4/4 passing
-make demo   # grounded answers for 5 scenarios
-```
-
-## Demo Questions
-
-1. Why is SKU-1842 showing available but failing pickup orders in Store 117?
-2. Route this BOPIS order for ZIP 27701 with SLA under 2 hours.
-3. We are entering Black Friday mode. Which stores should stop accepting ship-from-store orders?
-4. Can you guarantee this item will be available tomorrow? (must refuse)
-5. Show the evidence behind your routing decision.
+- Do not add real customer names, customer diagrams, production inventory/order data, credentials, private endpoints, or screenshots from private systems.
+- Keep `.env` untracked.
+- Keep the local test/eval/demo path runnable without cloud credentials.
+- Only claim production-grade GCP behavior after a real sandbox deployment has been performed and documented.
 
 ## Important Files
 
 ```text
-README.md                              Public project overview
-Makefile                               test/eval/demo commands
-app/agent/planner.py                   local deterministic planner
-app/agent/guardrails.py                refusal rules
-app/agent/tools.py                     tool wrapper used by planner
-app/agent/citations.py                 source-row citation builder
-app/services/anomaly_detection.py      phantom inventory logic
-app/services/routing_engine.py         BOPIS / ship-from-store routing logic
-app/services/inventory_repository.py   CSV-backed BigQuery-shaped repository
-app/services/bigquery_inventory.py     optional BigQuery adapter
-app/agent/vertex_adapter.py            strict Vertex/Gemini tool-call validation boundary
-app/api/main.py                        optional FastAPI app with stdlib fallback
-data/*.csv                             synthetic public-safe retail data
+README.md                              Public project overview and claim mapping
+docs/native-gcp-validation.md          GCP sandbox validation checklist
+docs/gcp-deployment.md                 Cloud Run / BigQuery / Vertex deployment notes
+app/agent/planner.py                   deterministic planner plus optional Vertex adapter
+app/agent/vertex_adapter.py            live Gemini tool-call adapter with validation
+app/services/bigquery_inventory.py     optional BigQuery repository adapter
+evals/eval_cases.json                  42 eval scenarios
 evals/run_evals.py                     eval runner
-evals/eval_cases.json                  eval cases
-infra/cloudrun.Dockerfile, deploy.sh   Cloud Run scaffolding
-.github/workflows/ci.yml               GitHub Actions test/eval workflow
-docs/                                  architecture, gcp-deployment, demo-script,
-                                       demo-transcript, design-decisions,
-                                       eval-methodology
+infra/deploy.sh                        Cloud Run deploy script
 ```
-
-## Safety Constraints (do not violate)
-
-Do not add: real customer names, production inventory/order data, secrets/tokens/private endpoints, HIPAA/PCI/production-compliance claims unless actually implemented, or guarantees of future inventory availability. All public examples stay synthetic.

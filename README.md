@@ -16,11 +16,27 @@ Retail platform modernization is not only a data warehouse story. Store operatio
 - deterministic retail operations tools before LLM reasoning
 - source-grounded answers with explicit evidence
 - refusal guardrails for unsupported or unsafe requests
-- tests and evals that prove the demo does what it claims
+- 40+ eval scenarios across six retail use cases that prove the demo does what it claims
 
 ## Current Status
 
-The core test/eval/demo path runs fully local with the Python standard library. Optional extras add FastAPI/Uvicorn and GCP clients for API serving, BigQuery seeding, and Cloud Run deployment.
+The core test/eval/demo path runs fully local with the Python standard library. Optional extras add FastAPI/Uvicorn and GCP clients for API serving, BigQuery seeding, live Vertex AI / Gemini tool-call planning, and Cloud Run deployment.
+
+## What Was Just Added
+
+- Expanded the eval suite from 4 scenarios to 42 scenarios across six retail use cases.
+- Added optional live BigQuery and Vertex AI / Gemini configuration paths while keeping the zero-dependency local demo as the default.
+- Added claim-mapping documentation so the repo directly supports the resume bullet.
+- Added a native GCP validation plan for the next pass.
+
+## Resume Claim Mapping
+
+This repo backs the retail operations agent claim directly:
+
+- GCP surface: BigQuery adapter, Vertex AI / Gemini adapter boundary, and Cloud Run deployment notes.
+- Six retail use cases: inventory anomaly detection, BOPIS routing, ship-from-store routing, peak-season throttling, refusal guardrails, and source-grounded evidence.
+- Eval coverage: `evals/eval_cases.json` contains 40+ named scenarios, and `make eval` writes a machine-readable report to `evals/reports/latest.json`.
+- Source grounding: every route or anomaly answer includes cited synthetic inventory or capacity rows.
 
 ## Architecture
 
@@ -100,6 +116,12 @@ See [docs/demo-transcript.md](docs/demo-transcript.md) for sample output from `m
 
 See [docs/discovery-questions.md](docs/discovery-questions.md) for retail scoping questions that connect this demo to a real Google Cloud Customer Engineer conversation.
 
+## Next Step: Native GCP Validation
+
+The next milestone is to run the same demo in a real sandbox GCP project: seed synthetic data into BigQuery, deploy the API to Cloud Run, and enable Vertex AI / Gemini tool-call planning behind `USE_VERTEX_AI=true`.
+
+See [docs/native-gcp-validation.md](docs/native-gcp-validation.md) for the plug-and-play test plan.
+
 ## Public-Safety Note
 
-All data is synthetic. Do not add customer names, customer diagrams, real order data, production endpoints, credentials, or screenshots from private systems.
+All data is synthetic. Do not add customer names, customer diagrams, real order data, production endpoints, credentials, or screenshots from private systems. This repo is safe to fork on a work machine because tracked files contain only public-safe code, synthetic CSVs, placeholder env examples, and docs.
