@@ -29,15 +29,6 @@ The core test/eval/demo path runs fully local with the Python standard library. 
 - Added claim-mapping documentation so the repo directly supports the resume bullet.
 - Added a native GCP validation plan for the next pass.
 
-## Resume Claim Mapping
-
-This repo backs the retail operations agent claim directly:
-
-- GCP surface: BigQuery adapter, Vertex AI / Gemini adapter boundary, and Cloud Run deployment notes.
-- Six retail use cases: inventory anomaly detection, BOPIS routing, ship-from-store routing, peak-season throttling, refusal guardrails, and source-grounded evidence.
-- Eval coverage: `evals/eval_cases.json` contains 40+ named scenarios, and `make eval` writes a machine-readable report to `evals/reports/latest.json`.
-- Source grounding: every route or anomaly answer includes cited synthetic inventory or capacity rows.
-
 ## Architecture
 
 ```mermaid
