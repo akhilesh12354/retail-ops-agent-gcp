@@ -1,14 +1,24 @@
 # Retail Ops Agent on GCP
 
 [![CI](https://github.com/akhileshthokala/retail-ops-agent-gcp/actions/workflows/ci.yml/badge.svg)](https://github.com/akhileshthokala/retail-ops-agent-gcp/actions/workflows/ci.yml)
+[![Deploy to Cloud Run](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run/?source=https://github.com/akhileshthokala/retail-ops-agent-gcp)
 
 A portfolio-grade retail operations agent that models how a Google Cloud customer engineer might scope a practical AI pilot for inventory accuracy, BOPIS routing, ship-from-store decisions, and peak-season operating controls.
 
 The repo is intentionally synthetic and public-safe. It uses fake stores, SKUs, orders, and capacity data so the architecture and decision logic are visible without exposing customer data.
 
+## One-click deploy
+
+| Target | Action |
+| --- | --- |
+| **Cloud Run** | Click **Deploy to Cloud Run** above, or `GOOGLE_CLOUD_PROJECT=your-project infra/deploy.sh` |
+| **Local API** | `make run-api` → POST http://127.0.0.1:8080/query |
+
+Optional env: `USE_BIGQUERY=true`, `USE_VERTEX_AI=true` (see `.env.example`).
+
 ## Portfolio Evidence Pack
 
-- [Architecture diagram](docs/architecture.md)
+- [Reference architecture](docs/architecture.md) · [Visual diagram](docs/architecture-diagram.html)
 - [Three-minute demo script](docs/demo-script.md) and [sample transcript](docs/demo-transcript.md)
 - [Proof-of-concept code](app/)
 - [Implementation guide](docs/gcp-deployment.md)
