@@ -6,6 +6,14 @@ A portfolio-grade retail operations agent that models how a Google Cloud custome
 
 The repo is intentionally synthetic and public-safe. It uses fake stores, SKUs, orders, and capacity data so the architecture and decision logic are visible without exposing customer data.
 
+## Portfolio Evidence Pack
+
+- [Architecture diagram](docs/architecture.md)
+- [Three-minute demo script](docs/demo-script.md) and [sample transcript](docs/demo-transcript.md)
+- [Proof-of-concept code](app/)
+- [Implementation guide](docs/gcp-deployment.md)
+- [Discovery framework](docs/discovery-questions.md)
+
 ## Why This Matters
 
 Retail platform modernization is not only a data warehouse story. Store operations depend on whether inventory, fulfillment capacity, routing rules, and customer promises all agree. This project demonstrates a small but complete pattern:
