@@ -88,7 +88,7 @@ def main() -> int:
                 for column_name, column_type in SCHEMAS[table_name]
             ],
             write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
-            allow_jagged_rows=True,
+            allow_jagged_rows=False,
             ignore_unknown_values=True,
         )
         with csv_path.open("rb") as handle:

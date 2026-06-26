@@ -50,6 +50,8 @@ class RetailOpsTools:
     def peak_season_recommendations(self) -> dict:
         overloaded = []
         for row in self.repo.capacity_rows():
+            if not _is_valid_capacity_row(row):
+                continue
             utilization = _capacity_utilization(row)
             if str(row["peak_season_mode"]).lower() == "true" and utilization >= 0.9:
                 overloaded.append((row, utilization))
@@ -68,6 +70,10 @@ class RetailOpsTools:
             "stores": [row["store_id"] for row, _ in overloaded],
             "sources": [cite_capacity_row(row) for row, _ in overloaded],
         }
+
+
+def _is_valid_capacity_row(row: dict) -> bool:
+    return row.get("store_id") and row.get("daily_capacity") is not None and row.get("open_orders") is not None
 
 
 def _capacity_utilization(row: dict) -> float:
