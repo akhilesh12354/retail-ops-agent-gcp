@@ -8,8 +8,12 @@ execution.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, List, Callable
+
+
+logger = logging.getLogger(__name__)
 
 
 ALLOWED_TOOLS = {
@@ -76,8 +80,46 @@ class VertexAgentAdapter:
                 "GCP dependencies are required for live Vertex AI planning. "
                 "Install them using: pip install '.[gcp]'"
             )
+        client = genai.Client(vertexai=True, project=self.project_id, location=self.location)
+        response = client.models.generate_content(
+            model=self.model,
+            contents=question,
+            config=types.GenerateContentConfig(
+                tools=self._get_tool_definitions(),
+                system_instruction=(
+                    "You are a retail operations assistant. Your job is to translate the user's "
+                    "question into one of the allowed tool calls. Do not try to answer the question "
+                    "directly; you must call one of the provided tools if the question is supported. "
+                    "If the question cannot be answered by any tool, do not make any tool call."
+                ),
+                temperature=0.0,
+            ),
+        )
 
-        # Define dummy tool functions to generate schema for Gemini tool calling
+        if not response.function_calls:
+            raise ValueError("Gemini did not plan any tool call for the question.")
+
+        call = response.function_calls[0]
+        arguments = dict(call.args) if call.args else {}
+
+        # Handle type casting for arguments (e.g., float/str returned by Gemini to int)
+        schema = ALLOWED_TOOLS.get(call.name, {})
+        for key, expected_type in schema.items():
+            if key in arguments:
+                if expected_type is int and isinstance(arguments[key], (float, str)):
+                    try:
+                        arguments[key] = int(arguments[key])
+                    except ValueError as e:
+                        logger.warning("Failed to cast argument %s to int: %s", key, e)
+
+        return self.validate_tool_call({
+            "name": call.name,
+            "arguments": arguments,
+        })
+
+    def _get_tool_definitions(self) -> List[Callable]:
+        """Returns the list of dummy functions representing the tool schemas."""
+
         def explain_phantom_inventory(store_id: str, sku: str) -> None:
             """Explain if there is a phantom inventory issue for a store and SKU.
 
@@ -105,40 +147,4 @@ class VertexAgentAdapter:
             """Get recommendations for stores that should stop accepting ship-from-store orders during peak season."""
             pass
 
-        client = genai.Client(vertexai=True, project=self.project_id, location=self.location)
-
-        response = client.models.generate_content(
-            model=self.model,
-            contents=question,
-            config=types.GenerateContentConfig(
-                tools=[explain_phantom_inventory, route_order, peak_season_recommendations],
-                system_instruction=(
-                    "You are a retail operations assistant. Your job is to translate the user's "
-                    "question into one of the allowed tool calls. Do not try to answer the question "
-                    "directly; you must call one of the provided tools if the question is supported. "
-                    "If the question cannot be answered by any tool, do not make any tool call."
-                ),
-                temperature=0.0,
-            ),
-        )
-
-        if not response.function_calls:
-            raise ValueError("Gemini did not plan any tool call for the question.")
-
-        call = response.function_calls[0]
-        arguments = dict(call.args) if call.args else {}
-
-        # Handle type casting for arguments (e.g., float/str returned by Gemini to int)
-        schema = ALLOWED_TOOLS.get(call.name, {})
-        for key, expected_type in schema.items():
-            if key in arguments:
-                if expected_type is int and isinstance(arguments[key], (float, str)):
-                    try:
-                        arguments[key] = int(arguments[key])
-                    except ValueError:
-                        pass
-
-        return self.validate_tool_call({
-            "name": call.name,
-            "arguments": arguments,
-        })
+        return [explain_phantom_inventory, route_order, peak_season_recommendations]

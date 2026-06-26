@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TypedDict, List, Any
 from app.agent.guardrails import refusal_for
 from app.agent.tools import RetailOpsTools
 from app.agent.vertex_adapter import VertexAgentAdapter
@@ -10,6 +11,13 @@ from app.services.inventory_repository import InventoryRepository
 
 
 logger = logging.getLogger(__name__)
+
+
+class AgentResponse(TypedDict):
+    answer: str
+    decision: str
+    sources: List[dict[str, Any]]
+    # Optional fields like stores or risk_score are handled by the dict
 
 
 class RetailOpsAgent:
@@ -48,7 +56,7 @@ class RetailOpsAgent:
 
         return cls(tools, adapter)
 
-    def answer(self, question: str) -> dict:
+    def answer(self, question: str) -> AgentResponse:
         refusal = refusal_for(question)
         if refusal:
             return {
@@ -58,26 +66,31 @@ class RetailOpsAgent:
             }
 
         if self.adapter is not None:
+            # Live path: Let Gemini decide which tool to call
             try:
                 tool_call = self.adapter.plan_tool_call(question)
                 if tool_call.name == "explain_phantom_inventory":
-                    return self.tools.explain_phantom_inventory(
+                    result = self.tools.explain_phantom_inventory(
                         store_id=tool_call.arguments["store_id"],
                         sku=tool_call.arguments["sku"],
                     )
-                if tool_call.name == "route_order":
-                    return self.tools.route_order(
+                elif tool_call.name == "route_order":
+                    result = self.tools.route_order(
                         sku=tool_call.arguments["sku"],
                         quantity=tool_call.arguments["quantity"],
                         destination_zip=tool_call.arguments["destination_zip"],
                         channel=tool_call.arguments["channel"],
                         sla_hours=tool_call.arguments["sla_hours"],
                     )
-                if tool_call.name == "peak_season_recommendations":
-                    return self.tools.peak_season_recommendations()
+                elif tool_call.name == "peak_season_recommendations":
+                    result = self.tools.peak_season_recommendations()
+                else:
+                    raise ValueError(f"Unknown tool: {tool_call.name}")
+                
+                return result # type: ignore
             except Exception as e:
                 # Keep the portfolio demo runnable when optional live cloud planning is unavailable.
-                logger.warning(f"Vertex AI planning failed: {e}. Falling back to deterministic keywords.")
+                logger.warning("Vertex AI planning failed: %s. Falling back to deterministic keywords.", e)
 
         q = question.lower()
         if _is_phantom_inventory_question(q):
@@ -115,6 +128,9 @@ def _is_phantom_inventory_question(q: str) -> bool:
         or "failing pickup" in q
         or "inventory mismatch" in q
         or "stockout risk" in q
+        or "ghost inventory" in q
+        or "on-hand discrepancy" in q
+        or "inventory shrinkage" in q
     )
 
 

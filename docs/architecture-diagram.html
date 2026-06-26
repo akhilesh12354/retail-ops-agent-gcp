@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retail Ops Agent — GCP Reference Architecture</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Google Sans", "Segoe UI", system-ui, sans-serif;
+      background: #f8f9fa;
+      color: #202124;
+      padding: 2rem;
+      line-height: 1.4;
+    }
+    h1 { font-size: 1.5rem; font-weight: 500; margin-bottom: 0.25rem; }
+    .subtitle { color: #5f6368; font-size: 0.9rem; margin-bottom: 2rem; }
+    .diagram {
+      background: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .row { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+    .arrow-down {
+      text-align: center;
+      color: #5f6368;
+      font-size: 1.25rem;
+      margin: 0.25rem 0;
+    }
+    .arrow-label {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #80868b;
+      margin-bottom: 0.5rem;
+    }
+    .box {
+      border: 2px solid #dadce0;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      min-width: 140px;
+      text-align: center;
+      font-size: 0.8rem;
+      background: #fff;
+    }
+    .box strong { display: block; font-size: 0.85rem; margin-bottom: 0.25rem; }
+    .box small { color: #5f6368; font-size: 0.72rem; }
+    .gcp { border-color: #4285f4; background: #e8f0fe; }
+    .gcp-ai { border-color: #9334e6; background: #f3e8fd; }
+    .gcp-data { border-color: #34a853; background: #e6f4ea; }
+    .gcp-ops { border-color: #f9ab00; background: #fef7e0; }
+    .app { border-color: #1a73e8; background: #f1f8ff; }
+    .user { border-color: #5f6368; background: #f1f3f4; }
+    .boundary {
+      border: 2px dashed #4285f4;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      position: relative;
+    }
+    .boundary-title {
+      position: absolute;
+      top: -0.65rem;
+      left: 1rem;
+      background: #fff;
+      padding: 0 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #4285f4;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tools-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .tool { font-size: 0.72rem; padding: 0.5rem 0.75rem; min-width: 120px; }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+      margin-top: 2rem; font-size: 0.75rem; color: #5f6368;
+    }
+    .legend span { display: flex; align-items: center; gap: 0.35rem; }
+    .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #dadce0; }
+    .footnote { max-width: 960px; margin: 1.5rem auto 0; font-size: 0.75rem; color: #80868b; }
+  </style>
+</head>
+<body>
+  <div class="diagram">
+    <h1>Retail Operations Agent on Google Cloud</h1>
+    <p class="subtitle">Reference architecture — serverless API + BigQuery truth layer + Vertex AI bounded tool planning</p>
+
+    <!-- Users -->
+    <div class="row">
+      <div class="box user">
+        <strong>Store / Ops user</strong>
+        <small>Natural-language question</small>
+      </div>
+      <div class="box user">
+        <strong>CI eval runner</strong>
+        <small>42 regression scenarios</small>
+      </div>
+    </div>
+    <div class="arrow-label">① HTTPS POST /query</div>
+    <div class="arrow-down">↓</div>
+
+  <div class="boundary">
+    <span class="boundary-title">Google Cloud</span>
+
+    <!-- Cloud Run -->
+    <div class="row">
+      <div class="box gcp" style="min-width: 220px;">
+        <strong>Cloud Run</strong>
+        <small>FastAPI · scale-to-zero<br/>GET /health · POST /query</small>
+      </div>
+    </div>
+    <div class="arrow-label">② Request enters application</div>
+    <div class="arrow-down">↓</div>
+
+    <!-- App layer -->
+    <div class="row">
+      <div class="box app">
+        <strong>Guardrails</strong>
+        <small>Refuse before tools / model</small>
+      </div>
+      <div class="box app">
+        <strong>Planner</strong>
+        <small>Local deterministic OR Vertex tool-call</small>
+      </div>
+      <div class="box app">
+        <strong>Tool validator</strong>
+        <small>Allowlist + typed args</small>
+      </div>
+    </div>
+    <div class="arrow-label">③④ Optional: Gemini proposes tool → validated</div>
+    <div class="arrow-down">↓</div>
+
+    <div class="row">
+      <div class="box gcp-ai">
+        <strong>Vertex AI</strong>
+        <small>Gemini 2.5 Flash<br/>bounded tool selection</small>
+      </div>
+    </div>
+    <div class="arrow-down">↓</div>
+
+    <div class="tools-row">
+      <div class="box app tool"><strong>Phantom inventory</strong></div>
+      <div class="box app tool"><strong>BOPIS routing</strong></div>
+      <div class="box app tool"><strong>Ship-from-store</strong></div>
+      <div class="box app tool"><strong>Peak-season policy</strong></div>
+    </div>
+    <div class="arrow-label">⑤⑥ Deterministic tools read operational truth</div>
+    <div class="arrow-down">↓</div>
+
+    <!-- Data -->
+    <div class="row">
+      <div class="box gcp-data" style="min-width: 280px;">
+        <strong>BigQuery</strong>
+        <small>dataset: retail_ops_demo<br/>inventory · orders · store_capacity</small>
+      </div>
+    </div>
+    <div class="arrow-label">⑦ Cited JSON response with source rows</div>
+    <div class="arrow-down">↑</div>
+
+    <!-- Ops -->
+    <div class="row" style="margin-top: 1.5rem;">
+      <div class="box gcp-ops"><strong>Cloud Logging</strong><small>audit trail</small></div>
+      <div class="box gcp-ops"><strong>Cloud Monitoring</strong><small>SLOs</small></div>
+      <div class="box gcp-ops"><strong>Secret Manager</strong><small>config</small></div>
+      <div class="box gcp-ops"><strong>IAM</strong><small>least privilege</small></div>
+    </div>
+  </div>
+
+    <div class="legend">
+      <span><i class="swatch" style="background:#e8f0fe;border-color:#4285f4"></i> Compute</span>
+      <span><i class="swatch" style="background:#f3e8fd;border-color:#9334e6"></i> AI / ML</span>
+      <span><i class="swatch" style="background:#e6f4ea;border-color:#34a853"></i> Data</span>
+      <span><i class="swatch" style="background:#f1f8ff;border-color:#1a73e8"></i> Application logic</span>
+      <span><i class="swatch" style="background:#fef7e0;border-color:#f9ab00"></i> Operations</span>
+    </div>
+  </div>
+
+  <p class="footnote">
+    Synthetic data only · Local dev uses CSV fallback (same schema) ·
+    Based on <a href="https://cloud.google.com/blog/products/application-development/13-popular-application-architectures-for-google-cloud">GCP reference architecture patterns</a>
+  </p>
+</body>
+</html>
