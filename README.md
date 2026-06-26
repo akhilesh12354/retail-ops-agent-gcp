@@ -113,6 +113,20 @@ The next milestone is to run the same demo in a real sandbox GCP project: seed s
 
 See [docs/native-gcp-validation.md](docs/native-gcp-validation.md) for the plug-and-play test plan.
 
+## Configuration
+
+Before deploying to Cloud Run, ensure the following environment variables are set:
+- `USE_BIGQUERY=true` (Set to true to use live BigQuery data)
+- `USE_VERTEX_AI=true` (Set to true to use Gemini for routing logic)
+- `GOOGLE_CLOUD_PROJECT=[YOUR_PROJECT_ID]`
+
+## Seeding BigQuery
+
+To load the demo data into BigQuery, run:
+```bash
+python scripts/seed_bigquery.py
+```
+
 ## Public-Safety Note
 
 All data is synthetic. Do not add customer names, customer diagrams, real order data, production endpoints, credentials, or screenshots from private systems. This repo is safe to fork on a work machine because tracked files contain only public-safe code, synthetic CSVs, placeholder env examples, and docs.

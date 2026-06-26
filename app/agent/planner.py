@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from app.agent.guardrails import refusal_for
 from app.agent.tools import RetailOpsTools
 from app.agent.vertex_adapter import VertexAgentAdapter
 from app.services.inventory_repository import InventoryRepository
+
+
+logger = logging.getLogger(__name__)
 
 
 class RetailOpsAgent:
@@ -38,7 +42,7 @@ class RetailOpsAgent:
             if not project_id:
                 raise ValueError("GOOGLE_CLOUD_PROJECT must be set when USE_VERTEX_AI=true")
             location = os.environ.get("VERTEX_LOCATION", "us-central1")
-            model = os.environ.get("VERTEX_MODEL", "gemini-2.5-flash")
+            model = os.environ.get("VERTEX_MODEL", "gemini-1.5-flash")
             from app.agent.vertex_adapter import VertexAgentAdapter
             adapter = VertexAgentAdapter(project_id, location, model)
 
@@ -71,9 +75,9 @@ class RetailOpsAgent:
                     )
                 if tool_call.name == "peak_season_recommendations":
                     return self.tools.peak_season_recommendations()
-            except Exception:
+            except Exception as e:
                 # Keep the portfolio demo runnable when optional live cloud planning is unavailable.
-                pass
+                logger.warning(f"Vertex AI planning failed: {e}. Falling back to deterministic keywords.")
 
         q = question.lower()
         if _is_phantom_inventory_question(q):
